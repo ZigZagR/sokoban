@@ -11,8 +11,9 @@ using namespace std;
 bool movimentoValido(int x, int y, int matriz[LINHA][COLUNA]);
 bool movimentoValidoCaixa(int x, int y, int matriz[LINHA][COLUNA]);
 void gotoxy(int XPos, int YPos);
-bool ganhou(int matriz[LINHA][COLUNA]);
+bool ganhou(int matriz[LINHA][COLUNA], int objetivos_totais);
 void print_jogo(int matriz[LINHA][COLUNA], HANDLE h);
+int contaObjetivos(int matriz[LINHA][COLUNA]);
 
 int main() 
 {
@@ -27,7 +28,7 @@ int main()
 	int matriz[LINHA][COLUNA] = 
 	{
 		{1, 1, 1, 1, 1},
-		{1, 0, 0, 0, 1},
+		{1, 0, 3, 5, 1},
 		{1, 2, 3, 5, 1},
 		{1, 0, 0, 0, 1},
 		{1, 1, 1, 1, 1}
@@ -51,6 +52,18 @@ int main()
 		}
 	}
 
+	int objetivos_totais = 0;
+	for(int i = 0; i < LINHA; i++)
+	{
+		for(int j = 0; j < COLUNA; j++)
+		{
+			if(matriz[i][j] == 5) 
+			{
+				objetivos_totais++;
+			}
+		}
+	}
+
 	char tecla;
 	cout << "\033[H\033[2J"; // limpa tela
 	
@@ -58,7 +71,7 @@ int main()
 	time_t inicio = time(0);
 	const int TEMPO_LIMITE = 300; // em segundos
 
-	while (difftime(time(0), inicio) < TEMPO_LIMITE && !ganhou(matriz)) 
+	while (difftime(time(0), inicio) < TEMPO_LIMITE && !ganhou(matriz, objetivos_totais)) 
 	{
 		gotoxy(0, 0); // clear
 		cout << "Controles: WASD para se mover, Q para sair" << endl; 
@@ -131,7 +144,7 @@ int main()
 	}
 
 	time_t timer = difftime(time(0), inicio);
-	if(ganhou(matriz))
+	if(ganhou(matriz, objetivos_totais))
 	{
 		gotoxy(0, 2); // clear
 		print_jogo(matriz, h);
@@ -183,19 +196,13 @@ void gotoxy(int XPos, int YPos)
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-bool ganhou(int matriz[LINHA][COLUNA])
+bool ganhou(int matriz[LINHA][COLUNA], int objetivos_totais)
 {
-	for(int i = 0; i < LINHA; i++)
+	if(contaObjetivos(matriz) == objetivos_totais)
 	{
-		for(int j = 0; j < COLUNA; j++)
-		{
-			if(matriz[i][j] == 5) // se tiver objetivo vazio
-			{
-				return false;
-			}
-		}
+		return true;
 	}
-	return true; 
+	return false;
 }
 
 void print_jogo(int matriz[LINHA][COLUNA], HANDLE h)
@@ -232,4 +239,20 @@ void print_jogo(int matriz[LINHA][COLUNA], HANDLE h)
 		}
 		cout << endl;
 	}
+}
+
+int contaObjetivos(int matriz[LINHA][COLUNA])
+{
+	int caixas_no_objetivo = 0;
+	for(int i = 0; i < LINHA; i++)
+	{
+		for(int j = 0; j < COLUNA; j++)
+		{
+			if(matriz[i][j] == 4)
+			{
+				caixas_no_objetivo++;
+			}
+		}
+	}
+	return caixas_no_objetivo;
 }
