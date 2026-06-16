@@ -28,16 +28,15 @@ int main()
 	int matriz[LINHA][COLUNA] = 
 	{
 		{1, 1, 1, 1, 1},
-		{1, 0, 3, 5, 1},
+		{1, 0, 0, 0, 1},
 		{1, 2, 3, 5, 1},
 		{1, 0, 0, 0, 1},
 		{1, 1, 1, 1, 1}
 	};
 	// 0 = vazio, 1 = parede, 2 = player, 3 = caixa 4 = caixa no objetivo, 5 = objetivo
 
-	int player_x, player_y;
+	int player_i, player_j;
 	int memo_player = 0; // o que estava abaio do player
-	int memo_caixa = 0;
 
 	for(int i = 0; i < LINHA; i++)
 	{
@@ -45,8 +44,8 @@ int main()
 		{
 			if(matriz[i][j] == 2) 
 			{
-				player_x = i;
-				player_y = j;
+				player_i = i;
+				player_j = j;
 				break;
 			}
 		}
@@ -89,51 +88,61 @@ int main()
 			// sai no 'q' or ESC
 			if (tecla == 'q' || tecla == 'Q' || tecla == 27) break;
 
-			int novo_x = player_x, novo_y = player_y;
+			int novo_i = player_i, novo_j = player_j;
+
 			switch (tecla) {
-				case 'w': novo_x = player_x - 1; break; 
-				case 's': novo_x = player_x + 1; break; 
-				case 'a': novo_y = player_y - 1; break; 
-				case 'd': novo_y = player_y + 1; break; 
+				case 'w': novo_i = player_i - 1; break; 
+				case 's': novo_i = player_i + 1; break; 
+				case 'a': novo_j = player_j - 1; break; 
+				case 'd': novo_j = player_j + 1; break; 
 				default: break;
 			}
 
-			if (!movimentoValido(novo_x, novo_y, matriz))
+			if (!movimentoValido(novo_i, novo_j, matriz))
 			{
 				continue; // movimento inválido, ignora e passa o loop
 			}
 
-			if(matriz[novo_x][novo_y] == 3 || matriz[novo_x][novo_y] == 4)
+			if(matriz[novo_i][novo_j] == 3 || matriz[novo_i][novo_j] == 4)
 			{
-				int caixa_novo_x = novo_x + (novo_x - player_x); 
-				int caixa_novo_y = novo_y + (novo_y - player_y);
+				int caixa_novo_i = novo_i + (novo_i - player_i); // posição que a caixa vai tentar se mover para 
+				int caixa_novo_j = novo_j + (novo_j - player_j);
 							
-				if (!movimentoValidoCaixa(caixa_novo_x, caixa_novo_y, matriz))
+				if (!movimentoValidoCaixa(caixa_novo_i, caixa_novo_j, matriz))
 				{
 					continue; // ignora e pula pro prox iteração
 				}
 
-				matriz[novo_x][novo_y] = memo_caixa;
-				// move a caixa
-				if (matriz[caixa_novo_x][caixa_novo_y] == 5) 
+				// se * vira . denovo
+				int memo_caixa; 
+				if(matriz[novo_i][novo_j] == 4) 
 				{
-					matriz[caixa_novo_x][caixa_novo_y] = 4; // no objetivo
+					memo_caixa = 5; 
+				}
+				else
+				{
+					memo_caixa = 0;
+				}
+				
+				// move a caixa
+				if (matriz[caixa_novo_i][caixa_novo_j] == 5) 
+				{
+					matriz[caixa_novo_i][caixa_novo_j] = 4; // no objetivo
 				} 
 				else 
 				{
-					matriz[caixa_novo_x][caixa_novo_y] = 3; // normal
+					matriz[caixa_novo_i][caixa_novo_j] = 3; // normal
 				}
 
-				memo_caixa = matriz[caixa_novo_x][caixa_novo_y]; 
-				if(memo_caixa == 4) memo_caixa = 5; // bug caixa no objetivo, saí virava *
+				matriz[novo_i][novo_j] = memo_caixa; // atualiza o que tá embaixo da caixa
 			}
 
-			matriz[player_x][player_y] = memo_player; // limpa posição ' '
-			memo_player = matriz[novo_x][novo_y];
+			matriz[player_i][player_j] = memo_player; // limpa posição ' '
+			memo_player = matriz[novo_i][novo_j];
 
-			player_x = novo_x; 
-			player_y = novo_y;
-			matriz[player_x][player_y] = 2; // reescreve '@' na nova posição
+			player_i = novo_i; 
+			player_j = novo_j;
+			matriz[player_i][player_j] = 2; // reescreve '@' na nova posição
 		}
 		else 
 		{
@@ -146,7 +155,7 @@ int main()
 	time_t timer = difftime(time(0), inicio);
 	if(ganhou(matriz, objetivos_totais))
 	{
-		gotoxy(0, 2); // clear
+		gotoxy(0, 2); // clear -> resultado após testar 
 		print_jogo(matriz, h);
 		gotoxy(0, LINHA + 3);
 		cout << "Voce ganhou em: " << timer << "s\n";
