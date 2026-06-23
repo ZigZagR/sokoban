@@ -5,8 +5,8 @@
 
 using namespace std;
 
-#define LINHA 5
-#define COLUNA 5
+#define LINHA 11
+#define COLUNA 22
 
 bool movimentoValido(int x, int y, int matriz[LINHA][COLUNA]);
 bool movimentoValidoCaixa(int x, int y, int matriz[LINHA][COLUNA]);
@@ -14,8 +14,44 @@ void gotoxy(int XPos, int YPos);
 bool ganhou(int matriz[LINHA][COLUNA], int objetivos_totais);
 void print_jogo(int matriz[LINHA][COLUNA], HANDLE h);
 int contaObjetivos(int matriz[LINHA][COLUNA]);
+void jogo();
+void limpa_tela();
 
-int main() 
+int main()
+{
+    while (true) {
+		limpa_tela();
+        cout << "==== Sokoban ====\n";
+        cout << "1) Jogar\n";
+        cout << "2) Ajuda\n";
+        cout << "3) Sair\n";
+        cout << "Selecione uma opcao: ";
+
+        char c = getch();
+        if (c == '1') {
+            jogo();
+            cout << "\nPressione qualquer tecla para retornar ao menu...";
+            getch();
+        } else if (c == '2') {
+			limpa_tela();
+            cout << "Ajuda:\n";
+            cout << "WASD para se mover, empurrar caixas (#) para os objetivos (.)\n";
+			cout << "Pressione 'q' para sair do jogo\n";
+            cout << "Pressione qualquer tecla para retornar ao menu...";
+            getch();
+        } else if (c == '3' || c == 27) {
+			limpa_tela();
+            break; // sair
+        }
+    }
+	return 0; 
+}
+
+void limpa_tela() {
+	cout << "\033[H\033[2J"; // limpador de tela universal ANSI -> Stackoverflow
+}
+
+void jogo() 
 {
 	// desativa o cursor no console
 	CONSOLE_CURSOR_INFO cursor;
@@ -26,12 +62,18 @@ int main()
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE); // handle da saída do console
 
 	int matriz[LINHA][COLUNA] = 
-	{
-		{1, 1, 1, 1, 1},
-		{1, 0, 0, 0, 1},
-		{1, 2, 3, 5, 1},
-		{1, 0, 0, 0, 1},
-		{1, 1, 1, 1, 1}
+	{// não deu de gerar com ia isso aqui infelizmente. Juro que tentei me poupar o trabalho, mas estou eu aqui, nove horas da noite de uma segunda feira, digitando 0 e 1.
+		{0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 1, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 1, 1, 1, 0, 0, 3, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 1, 0, 0, 3, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
+		{1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 5, 5, 1},
+		{1, 0, 3, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 1},
+		{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 2, 1, 1, 1, 1, 0, 0, 5, 5, 1},
+		{0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1},
+		{0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
 	// 0 = vazio, 1 = parede, 2 = player, 3 = caixa 4 = caixa no objetivo, 5 = objetivo
 
@@ -64,8 +106,7 @@ int main()
 	}
 
 	char tecla;
-	cout << "\033[H\033[2J"; // limpa tela
-	
+	limpa_tela();
 
 	time_t inicio = time(0);
 	const int TEMPO_LIMITE = 300; // em segundos
@@ -167,7 +208,6 @@ int main()
 		gotoxy(0, LINHA + 3);
 		cout << "Tempo esgotado! Tente novamente.\n";
 	}
-	return 0;
 }
 
 bool movimentoValido(int x, int y, int matriz[LINHA][COLUNA])
