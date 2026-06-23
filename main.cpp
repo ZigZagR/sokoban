@@ -19,31 +19,47 @@ void limpa_tela();
 
 int main()
 {
-    while (true) {
+	while (true) 
+	{
 		limpa_tela();
-        cout << "==== Sokoban ====\n";
-        cout << "1) Jogar\n";
-        cout << "2) Ajuda\n";
-        cout << "3) Sair\n";
-        cout << "Selecione uma opcao: ";
+		cout << "==== Sokoban ====\n";
+		cout << "1) Jogar\n";
+		cout << "2) Ajuda\n";
+		cout << "3) Sobre\n";
+		cout << "4) Sair\n";
+		cout << "Selecione uma opcao: ";
 
-        char c = getch();
-        if (c == '1') {
-            jogo();
-            cout << "\nPressione qualquer tecla para retornar ao menu...";
-            getch();
-        } else if (c == '2') {
+		char c = getch();
+		if (c == '1') 
+		{
+			jogo();
+			cout << "\nPressione qualquer tecla para retornar ao menu...";
+			getch();
+		} 
+		else if (c == '2') 
+		{
 			limpa_tela();
-            cout << "Ajuda:\n";
-            cout << "WASD para se mover, empurrar caixas (#) para os objetivos (.)\n";
+			cout << "Ajuda:\n";
+			cout << "WASD para se mover, empurrar caixas (#) para os objetivos (.)\n";
 			cout << "Pressione 'q' para sair do jogo\n";
-            cout << "Pressione qualquer tecla para retornar ao menu...";
-            getch();
-        } else if (c == '3' || c == 27) {
+			cout << "Pressione qualquer tecla para retornar ao menu...";
+			getch();
+		} 
+		else if (c == '3')
+		{
+			system("cls");
+			cout << "Equipe de desenvolvimento:\n- Pedro Henrique R. J. Nicolini\n- Luiz Eduardo F. N. Goncalves\n";
+			cout << "Junho/2026\n";
+			cout << "Professor: Thiago Felski\nDisciplina: Algoritmos e Programacao\n\n";
+			cout << "Pressione qualquer tecla para voltar ao menu...";
+			getch(); 
+		} 
+		else if (c == '4' || c == 27) 
+		{
 			limpa_tela();
-            break; // sair
-        }
-    }
+			break; // sair
+		}
+    	}
 	return 0; 
 }
 
